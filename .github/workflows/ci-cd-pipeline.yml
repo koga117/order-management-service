@@ -64,6 +64,10 @@ jobs:
         run: |
           git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
 
+      # Verificar la URL remota
+      - name: Verify Remote URL
+        run: git remote -v
+
       # Commit y push de los cambios
       - name: Commit changes
         run: |
