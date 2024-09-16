@@ -14,9 +14,8 @@ exports.createOrder = async (req, res) => {
 exports.getAllOrders = async (req, res) => {
   try {
     const ordersExists = await orderService.getAllOrders();
-    if(!ordersExists) {
-      const error = new Error('No se encuentran pedidos')
-      res.status(404).json({ message: error.message })
+    if(!ordersExists|| ordersExists.length === 0) {
+      return res.status(404).json({ message: 'No se encuentran pedidos' });
     }
     res.status(200).json(ordersExists);
   } catch (error) {

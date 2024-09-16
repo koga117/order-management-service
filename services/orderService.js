@@ -23,5 +23,5 @@ exports.getAllOrders = async () => {
   };
 
   const result = await dynamoDb.scan(params).promise();
-  return result.Items;
+  return result.Items || [];
 };
