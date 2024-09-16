@@ -1,12 +1,28 @@
 const request = require('supertest');
+const express = require('express');
 const app = require('../app');
 const orderService = require('../services/orderService');
 
 // Mock del servicio de pedidos
 jest.mock('../services/orderService');
 
-describe('Order Management Service', () => {
+let server;
+const PORT = 3001;
 
+beforeAll(done => {
+  server = app.listen(PORT, done);
+});
+
+afterAll(done => {
+  if (server) {
+    server.close(done);
+  } else {
+    done();
+  }
+});
+
+describe('Order Management Service', () => {
+  
   // Prueba para crear una orden
   describe('POST /orders', () => {
     it('should create a new order and return 201 status', async () => {
@@ -22,7 +38,7 @@ describe('Order Management Service', () => {
         createdAt: new Date().toISOString(),
       });
 
-      const res = await request(app)
+      const res = await request(`http://localhost:${PORT}`)
         .post('/orders')
         .send(mockOrder);
 
@@ -31,7 +47,7 @@ describe('Order Management Service', () => {
     });
 
     it('should return 400 if required fields are missing', async () => {
-      const res = await request(app).post('/orders').send({
+      const res = await request(`http://localhost:${PORT}`).post('/orders').send({
         product: '',
         quantity: '',
         customerName: '',
@@ -52,7 +68,7 @@ describe('Order Management Service', () => {
 
       orderService.getAllOrders.mockResolvedValue(mockOrders);
 
-      const res = await request(app).get('/orders');
+      const res = await request(`http://localhost:${PORT}`).get('/orders');
 
       expect(res.statusCode).toEqual(200);
       expect(res.body).toEqual(mockOrders);
@@ -61,7 +77,7 @@ describe('Order Management Service', () => {
     it('should return 404 if no orders are found', async () => {
       orderService.getAllOrders.mockResolvedValue([]); // Simula que no hay pedidos
 
-      const res = await request(app).get('/orders');
+      const res = await request(`http://localhost:${PORT}`).get('/orders');
 
       expect(res.statusCode).toEqual(404);
       expect(res.body.message).toEqual('No se encuentran pedidos');
