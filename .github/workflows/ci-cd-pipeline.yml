@@ -38,20 +38,15 @@ jobs:
           echo "Git user name: ${{ secrets.GIT_USER_NAME }}"
 
       # Configurar Git
-      - name: Configure Git
+      - name: Configure Git User
         run: |
-          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
-          git config --global user.name "${{ secrets.GIT_USER_NAME }}"
-          git config --global credential.helper store
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          git config user.email "${{ secrets.GIT_USER_EMAIL }}"
+          git config user.name "${{ secrets.GIT_USER_NAME }}"
 
-      # Imprimir valores del token para verificar
-      - name: Verify PAT Token
+      # Configurar la URL remota con el PAT
+      - name: Set Git Remote URL
         run: |
-          echo "PAT Token: $PAT_TOKEN"
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
 
       # Incrementar la versión y generar changelog
       - name: Bump version and generate changelog
@@ -59,18 +54,10 @@ jobs:
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
-      # Configurar autenticación con el token para el commit y push
-      - name: Set Git Remote URL
+      # Commit y push de los cambios
+      - name: Commit and Push Changes
         run: |
           git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
-
-      # Verificar la URL remota
-      - name: Verify Remote URL
-        run: git remote -v
-
-      # Commit y push de los cambios
-      - name: Commit changes
-        run: |
           git add .
           git commit -m "chore(release): bump version and generate changelog" || echo "No changes to commit"
           git push origin main
