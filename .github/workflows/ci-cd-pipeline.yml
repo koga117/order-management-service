@@ -41,8 +41,8 @@ jobs:
       # Commit y push de los cambios
       - name: Commit changes
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "GitHub Actions"
+          git config --local user.email "chenleecasas@gmail.com"
+          git config --local user.name "koga117"
           git add .
           git commit -m "chore(release): bump version and generate changelog"
           git push origin main
