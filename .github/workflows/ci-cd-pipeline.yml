@@ -42,12 +42,27 @@ jobs:
         run: |
           git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
           git config --global user.name "${{ secrets.GIT_USER_NAME }}"
+          git config --global credential.helper store
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+      # Imprimir valores del token para verificar
+      - name: Verify PAT Token
+        run: |
+          echo "PAT Token: $PAT_TOKEN"
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
       # Incrementar la versión y generar changelog
       - name: Bump version and generate changelog
         run: npm run release
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+      # Configurar autenticación con el token para el commit y push
+      - name: Set Git Remote URL
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
 
       # Commit y push de los cambios
       - name: Commit changes
