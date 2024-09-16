@@ -48,6 +48,12 @@ jobs:
         run: |
           git config --lis
 
+      # Imprimir valores de variables para depuración
+      - name: Print Git Config
+        run: |
+          echo "Git user email: ${{ secrets.GIT_USER_EMAIL }}"
+          echo "Git user name: ${{ secrets.GIT_USER_NAME }}"
+
       # Commit y push de los cambios
       - name: Commit changes
         run: |
